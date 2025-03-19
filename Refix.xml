@@ -1,0 +1,39 @@
+<block type="before_purchase" id="strategy" collapsed="true" x="0" y="701">
+  <statement name="BEFOREPURCHASE_STACK">
+    <block type="controls_if">
+      <value name="IF0">
+        <block type="logic_compare">
+          <field name="OP">GTE</field>
+          <value name="A">
+            <block type="variables_get">
+              <field name="VAR" id="runs">Run Count</field>
+            </block>
+          </value>
+          <value name="B">
+            <block type="math_number">
+              <field name="NUM">5</field>
+            </block>
+          </value>
+        </block>
+      </value>
+      <statement name="DO0">
+        <block type="notify">
+          <field name="NOTIFICATION_TYPE">success</field>
+          <value name="MESSAGE">
+            <block type="text">
+              <field name="TEXT">Bot has completed 5 runs. Stopping...</field>
+            </block>
+          </value>
+          <next>
+            <block type="trade_close" />
+          </next>
+        </block>
+      </statement>
+    </block>
+    <next>
+      <block type="purchase">
+        <field name="PURCHASE_LIST">DIGITMATCH</field>
+      </block>
+    </next>
+  </statement>
+</block>
