@@ -1,0 +1,142 @@
+<xml xmlns="http://www.w3.org/1999/xhtml" collection="false">
+  <variables>
+    <variable type="" id="stake">Stake</variable>
+    <variable type="" id="loss">Loss</variable>
+    <variable type="" id="profit">Target Profit</variable>
+  </variables>
+  
+  <block type="trade" id="trade" x="-179" y="-91">
+    <field name="MARKET_LIST">synthetic_index</field>
+    <field name="SUBMARKET_LIST">random_index</field>
+    <field name="SYMBOL_LIST">R_100</field>
+    <field name="TRADETYPECAT_LIST">digits</field>
+    <field name="TRADETYPE_LIST">matches</field>
+    <field name="TYPE_LIST">both</field>
+    <field name="CANDLEINTERVAL_LIST">60</field>
+    <field name="TIME_MACHINE_ENABLED">FALSE</field>
+    <field name="RESTARTONERROR">TRUE</field>
+
+    <statement name="INITIALIZATION">
+      <block type="text_print" id="msg">
+        <value name="TEXT">
+          <shadow type="text">
+            <field name="TEXT">Starting Digit Matches Bot...</field>
+          </shadow>
+        </value>
+        <next>
+          <block type="variables_set" id="init_loss">
+            <field name="VAR" id="loss" variabletype="">Loss</field>
+            <value name="VALUE">
+              <block type="math_number">
+                <field name="NUM">100</field>
+              </block>
+            </value>
+            <next>
+              <block type="variables_set" id="init_profit">
+                <field name="VAR" id="profit" variabletype="">Target Profit</field>
+                <value name="VALUE">
+                  <block type="math_number">
+                    <field name="NUM">50</field>
+                  </block>
+                </value>
+                <next>
+                  <block type="variables_set" id="init_stake">
+                    <field name="VAR" id="stake" variabletype="">Stake</field>
+                    <value name="VALUE">
+                      <block type="math_number">
+                        <field name="NUM">1</field>
+                      </block>
+                    </value>
+                  </block>
+                </next>
+              </block>
+            </next>
+          </block>
+        </next>
+      </block>
+    </statement>
+
+    <statement name="SUBMARKET">
+      <block type="tradeOptions">
+        <field name="DURATIONTYPE_LIST">t</field>
+        <field name="CURRENCY_LIST">USD</field>
+        <value name="DURATION">
+          <block type="math_number">
+            <field name="NUM">1</field>
+          </block>
+        </value>
+        <value name="AMOUNT">
+          <block type="variables_get">
+            <field name="VAR" id="stake" variabletype="">Stake</field>
+          </block>
+        </value>
+        <value name="PREDICTION">
+          <shadow type="math_number">
+            <field name="NUM">5</field>
+          </shadow>
+        </value>
+      </block>
+    </statement>
+  </block>
+
+  <block type="after_purchase" id="finish" x="0" y="648">
+    <statement name="AFTERPURCHASE_STACK">
+      <block type="controls_if">
+        <mutation else="1"></mutation>
+        <value name="IF0">
+          <block type="contract_check_result">
+            <field name="CHECK_RESULT">win</field>
+          </block>
+        </value>
+        <statement name="DO0">
+          <block type="notify">
+            <field name="NOTIFICATION_TYPE">success</field>
+            <value name="MESSAGE">
+              <block type="text">
+                <field name="TEXT">Win! Adjusting stake...</field>
+              </block>
+            </value>
+            <next>
+              <block type="variables_set">
+                <field name="VAR" id="stake" variabletype="">Stake</field>
+                <value name="VALUE">
+                  <block type="math_number">
+                    <field name="NUM">1</field>
+                  </block>
+                </value>
+              </block>
+            </next>
+          </block>
+        </statement>
+        <statement name="ELSE">
+          <block type="notify">
+            <field name="NOTIFICATION_TYPE">warn</field>
+            <value name="MESSAGE">
+              <block type="text">
+                <field name="TEXT">Loss! Increasing stake...</field>
+              </block>
+            </value>
+            <next>
+              <block type="math_change">
+                <field name="VAR" id="stake" variabletype="">Stake</field>
+                <value name="DELTA">
+                  <block type="math_number">
+                    <field name="NUM">2</field>
+                  </block>
+                </value>
+              </block>
+            </next>
+          </block>
+        </statement>
+      </block>
+    </statement>
+  </block>
+
+  <block type="before_purchase" id="strategy" collapsed="true" x="0" y="701">
+    <statement name="BEFOREPURCHASE_STACK">
+      <block type="purchase">
+        <field name="PURCHASE_LIST">DIGITMATCH</field>
+      </block>
+    </statement>
+  </block>
+</xml>
