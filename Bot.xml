@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xml xmlns="http://www.w3.org/1999/xhtml">
+  <variables>
+    <variable type="int" id="stake">1</variable>
+    <variable type="int" id="multiplier">2</variable>
+    <variable type="int" id="max_loss">5</variable>
+    <variable type="int" id="loss_count">0</variable>
+    <variable type="string" id="market">R_75</variable>
+    <variable type="string" id="contract">CALL</variable>
+  </variables>
+  <block type="trade_definition" id="trade_block">
+    <field name="MARKET">{{market}}</field>
+    <field name="CONTRACT_TYPE">{{contract}}</field>
+    <field name="DURATION">1</field>
+    <field name="DURATION_UNIT">ticks</field>
+    <field name="STAKING_METHOD">stake</field>
+    <value name="AMOUNT">
+      <block type="math_number" id="stake_block">
+        <field name="NUM">{{stake}}</field>
+      </block>
+    </value>
+  </block>
+  <block type="trade_result" id="result_block">
+    <value name="ON_WIN">
+      <block type="set_variable" id="reset_loss">
+        <field name="VAR">loss_count</field>
+        <value name="VALUE">
+          <block type="math_number">
+            <field name="NUM">0</field>
+          </block>
+        </value>
+      </block>
+    </value>
+    <value name="ON_LOSS">
+      <block type="controls_if" id="martingale_check">
+        <value name="IF">
+          <block type="logic_compare">
+            <field name="OP">LT</field>
+            <value name="A">
+              <block type="variables_get">
+                <field name="VAR">loss_count</field>
+              </block>
+            </value>
+            <value name="B">
+              <block type="variables_get">
+                <field name="VAR">max_loss</field>
+              </block>
+            </value>
+          </block>
+        </value>
+        <statement name="DO">
+          <block type="set_variable" id="increase_loss">
+            <field name="VAR">loss_count</field>
+            <value name="VALUE">
+              <block type="math_arithmetic">
+                <field name="OP">ADD</field>
+                <value name="A">
+                  <block type="variables_get">
+                    <field name="VAR">loss_count</field>
+                  </block>
+                </value>
+                <value name="B">
+                  <block type="math_number">
+                    <field name="NUM">1</field>
+                  </block>
+                </value>
+              </block>
+            </value>
+          </block>
+          <block type="set_variable" id="increase_stake">
+            <field name="VAR">stake</field>
+            <value name="VALUE">
+              <block type="math_arithmetic">
+                <field name="OP">MULTIPLY</field>
+                <value name="A">
+                  <block type="variables_get">
+                    <field name="VAR">stake</field>
+                  </block>
+                </value>
+                <value name="B">
+                  <block type="variables_get">
+                    <field name="VAR">multiplier</field>
+                  </block>
+                </value>
+              </block>
+            </value>
+          </block>
+        </statement>
+      </block>
+    </value>
+  </block>
+</xml>
